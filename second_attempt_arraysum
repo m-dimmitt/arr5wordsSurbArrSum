@@ -1,0 +1,68 @@
+.The following program reads a sequence of characters from DEVF2 and writes the same to DEV04
+
+.Define an array named ARRAY_FIVE of 5 words. Initialize every word in ARRAY_FIVE with decimal
+.2. Now, write a subroutine which adds up all the numbers in ARRAY_FIVE and stores at a memory
+.word named ARRAY_SUM. You must use the JSUB and RSUB instructions at appropriate places.
+.JSUB - jump Subroutine 
+.RSUB - Read Subroutine.
+
+
+GATHERSUMARRAYTWOS START 100
+
+JSUB SUM_SUBR
+J EXEC_OVER
+
+.............................................
+LDA TWO                  .A <-- (TWO)
+STA VALUE2ST              .VALUE2ST <-- (A)
+LDA ZERO                  .A <-- (ZERO)
+STA INDEX                 .INDEX <-- (A)
+LDX INDEX                 .X <-- (INDEX)
+LOOP_START LDA VALUE2ST   .A <-- (VALUE2ST)
+ADD TWO                   .A <-- (A) + 2
+STA VALUE2ST              .VALUE2ST <-- (A)
+LDX INDEX                 .X <-- (INDEX)
+STA SRC_ARRAY,X           .SRC_ARRAY + X <-- (A); same as writing SRC_ARRAY[X] <-- (A)
+LDA INDEX                 .A <-- (INDEX)
+ADD SIX                 .A <-- (A) + 3
+STA INDEX                 .INDEX <-- (A)
+COMP THIRTY               .(A) : (THIRTY,THIRTY+1,THIRTY+2) and set CC accordingly
+JLT LOOP_START            .if CC is <, then jump to LOOP_START
+VALUE2ST RESW 1           .Reserve a word and call it VALUE2ST
+INDEX RESW 1              .Reserve a word and call it INDEX
+SRC_ARRAY RESW 5      .Reserve and array of 5 words and call it SRC_ARRAY
+ZERO WORD 0               .Define a word constant initialized to 0
+TWO WORD 2
+ONE WORD 1                .Define a word constant initialized to 1
+SIX WORD 6              .Define a word constant initialized to 3
+THIRTY WORD 30            .Define a word constant initialized to 30
+
+......................................
+READ_SUBR LDX ZERO .Start of subroutine READ_SUBR
+READ_LOOP TD INPUT_DEV
+JEQ READ_LOOP
+RD INPUT_DEV
+STCH INPUT_DATA,X
+TIX INPUT_LEN
+JLT READ_LOOP
+RSUB .End of subroutine READ_SUBR
+......................................
+SUM_SUBR LDX ZERO .Start of subroutine WRITE_SUBR
+.put your array here.
+JEQ SUM_LOOP
+.Add here
+
+
+
+RSUB .End of subroutine SUM_SUBR
+......................................
+EXEC_OVER BYTE X‘FF’ .A byte storing all ones
+......................................
+INPUT_DEV BYTE X‘F2’
+OUTPUT_DEV BYTE X‘04’
+NEWLINE BYTE X‘0A’
+INPUT_DATA RESB 9
+ZERO WORD 0
+INPUT_LEN WORD 9
+......................................
+END FILE_IO
