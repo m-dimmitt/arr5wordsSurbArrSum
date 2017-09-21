@@ -2,7 +2,6 @@
 .2. Now, write a subroutine which adds up all the numbers in ARRAY_FIVE and stores at a memory
 .word named ARRAY_SUM. You must use the JSUB and RSUB instructions at appropriate places.
 
-.The following program initializes an array of 10 words with integers 1...10
 
 INIT_ARRAY START 100      .Load the program at loc 100
 LDA TWO                  .A <-- (TWO)
